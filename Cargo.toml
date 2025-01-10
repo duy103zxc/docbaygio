@@ -1,0 +1,10 @@
+[package]
+name = "reednow"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ureq = "2.10"
+html-purifier = "0.3.0"
+html2md = "0.2.14"
+anyhow = "1.0.95"

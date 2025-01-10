@@ -1,0 +1,1 @@
+cargo run -- "https://tailscale.com/blog/how-nat-traversal-works" "how-nat-works"
