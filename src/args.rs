@@ -1,4 +1,5 @@
 use std::env;
+// Sẽ đổi qua sử dụng clap do tính chất phức tạp của phần mềm
 
 pub struct Config {
     pub url: String,

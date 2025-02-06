@@ -1,15 +1,5 @@
 # Một ứng dụng giúp tải xuống nhanh một trang dưới dạng Markdown, và tạo thư mục cho ảnh bất kì
 
-Nhưng còn nếu mà muốn tải nhiều bài viết với cùng một thư mục thì sao
-
-Làm một phần mềm để khi tải thì sẽ trả về 
-
-Vậy thì cần tóm tắt lại:
-
-- Sử dụng go-epub => convert HTML to EPUB
-- colly - query HTML trees -> like scraper
-- Sửa lại lỗi xử lý epub trong: https://github.com/duy103zxc/epub-builder 
-
 ### Ý tưởng dự án
 
 1. Dự án của bạn là gì và về cái gì? - Ứng dụng tương tự papeer nhưng được viết bằng Rust, có khả năng tải xuống nội dung từ trình duyệt về để đọc.
@@ -34,7 +24,7 @@ Lần này hãy thử viết nó thành một Library đi :D
     - xử lý tương tự sử dụng "tải một bài viêt"
         - Markdown: Gộp thành một tệp Markdown hoặc chia ra làm nhiều tệp
         - EPUB: Cái này khó hơn chút
-
+- Tạo một trait để xử lý vụ này có được k?
 #### DOING (Đang làm)
 
 #### DONE (Đã làm xong)
