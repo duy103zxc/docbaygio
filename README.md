@@ -6,8 +6,11 @@ A CLI Application for downloading posts from the Internet to EPUB or Markdown fo
 ### Installation
 Not yet
 
-### Build
+### Building & Testing
 
 ```bash
-cargo build --release
+# Building the app and moving it to the ~/.local/bin/ folder
+./build.sh
+# Testing the application
+./test.sh
 ```

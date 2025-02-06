@@ -1,4 +1,4 @@
-use std::{fs::{self, File, OpenOptions}, path::Path};
+use std::fs::{self, File, OpenOptions};
 
 use ureq::http::Response;
 
@@ -9,7 +9,7 @@ pub fn fetching_content_from_url(url: &str) -> Result<Response<ureq::Body>, ureq
 }
 
 pub fn fetching_page_title(url: &str) -> String {
-    String::from("")
+    String::from("Untitled")
 }
 
 pub fn generate_writable_file(file_name: &str, file_format: &str) -> Result<File, std::io::Error> {
