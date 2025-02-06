@@ -1,5 +1,5 @@
-use std::{error::Error, fs::{self, File, OpenOptions}, io::Write, path::Path};
-use epub_builder::{EpubBuilder, EpubContent, ReferenceType, ZipLibrary};
+use std::{fs::{self, File, OpenOptions}, path::Path};
+
 use ureq::http::Response;
 
 pub fn fetching_content_from_url(url: &str) -> Result<Response<ureq::Body>, ureq::Error>  {
@@ -12,28 +12,6 @@ pub fn fetching_page_title(url: &str) -> String {
     String::from("")
 }
 
-pub fn write_to_md_file(file_name: &str, text: String) -> anyhow::Result<()> {
-    let mut new_file = generate_writable_file(file_name, "md")?;
-    new_file.write_all(text.as_bytes())?;
-    Ok(())
-}
-
-pub fn write_to_epub(file_name: &str, text: &str, title: &str) -> Result<(), Box<dyn Error>> {
-    let mut epub_builder = EpubBuilder::new(ZipLibrary::new().unwrap()).unwrap();
-    epub_builder.metadata("author", "docbaygio")?;
-    epub_builder.metadata("title", title)?;
-    // Set some metadata
-    epub_builder.add_content(EpubContent::new("post.xhtml", text.as_bytes())
-                     .title("Post")
-                     .reftype(ReferenceType::Text))?
-        .inline_toc();
-
-    // Write EPUB to file
-    let mut epub_file = fs::File::create(format!("{}.epub", file_name))?;
-    epub_builder.generate(&mut epub_file)?;
-    Ok(())
-}
-
 pub fn generate_writable_file(file_name: &str, file_format: &str) -> Result<File, std::io::Error> {
     OpenOptions::new()
         .create(true)
@@ -42,7 +20,7 @@ pub fn generate_writable_file(file_name: &str, file_format: &str) -> Result<File
         .open(format!("{}.{}", file_name, file_format))
 }
 
-pub fn gen_urls(text_file: &Path) -> anyhow::Result<Vec<String>> {
+pub fn gen_urls(text_file: &str) -> anyhow::Result<Vec<String>> {
     let links: Vec<String> = fs::read_to_string(text_file)?.lines().map(|line| String::from(line)).collect();
     Ok(links)
 }

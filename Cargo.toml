@@ -1,5 +1,5 @@
 [package]
-name = "reednow"
+name = "docbaygio"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,4 @@ sanitize_html = "0.8.1"
 anyhow = "1.0.95"
 nanohtml2text = "0.2.1"
 epub-builder = "0.7.4"
+clap = { version = "4.5.28", features = ["derive"] }

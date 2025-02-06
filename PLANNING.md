@@ -14,6 +14,12 @@ Lần này hãy thử viết nó thành một Library đi :D
 
 #### TODO (Cần làm)
 
+
+- Tạo một trait để xử lý vụ này có được k?
+#### DOING (Đang làm)
+
+#### DONE (Đã làm xong)
+- Fetch content from browser - MVP -> strip content to pure html - MVP Chỉ sử dụng hai function cho cả hai cái này
 - tải một bài viêt 
     - Convert from HTML to Markdown - MVP -> pub fn to_markdown(content: &str) -> &str (return corresponding markdown content)
     - Convert from HTML to EPUB - MVP -> pub fn to_epub() (chưa xử lý được), helper functions:
@@ -24,11 +30,6 @@ Lần này hãy thử viết nó thành một Library đi :D
     - xử lý tương tự sử dụng "tải một bài viêt"
         - Markdown: Gộp thành một tệp Markdown hoặc chia ra làm nhiều tệp
         - EPUB: Cái này khó hơn chút
-- Tạo một trait để xử lý vụ này có được k?
-#### DOING (Đang làm)
-
-#### DONE (Đã làm xong)
-- Fetch content from browser - MVP -> strip content to pure html - MVP Chỉ sử dụng hai function cho cả hai cái này
 
 #### BUGS / NOT SURE HOW TO DO (Lỗi, không biết nên làm gì)
 
@@ -48,3 +49,10 @@ using ureq to fetch the content,
 #### 3. Các ý tưởng bất chợt
 - Tạo một thư mục, xử lý toàn bộ các nội dung trong đó thay vì lưu trong bộ nhớ đệm
 - Có tệp nào để kiểm tra tiến trình không?
+
+### additional
+
+Viết ví dụ cho lệnh
+
+docbaygio get "post-link"
+docbaygio get -a (--file) post_link_file

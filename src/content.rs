@@ -1,7 +1,8 @@
 use nanohtml2text::html2text;
 use sanitize_html::{rules::predefined::BASIC, sanitize_str};
-
-use crate::utils::{fetching_page_title, write_to_md_file};
+use epub_builder::{EpubBuilder, EpubContent, ReferenceType, ZipLibrary};
+use std::{error::Error, fs, io::Write};
+use crate::utils::{self, fetching_page_title};
 
 pub enum RequestedEbookFormat {
     EPUB,
@@ -12,7 +13,8 @@ pub enum RequestedEbookFormat {
 
 pub enum DownloadingMode {
     SingleURL(String),
-    MultipleURL(Vec<String>)
+    MultipleURL(Vec<String>),
+    Unknown
 }
 
 /*
@@ -52,7 +54,45 @@ fn to_markdown(html: &str) -> String {
     html2text(&clean_raw_response(html))
 }
 
+pub fn write_to_md_file(file_name: &str, text: String) -> anyhow::Result<()> {
+    let mut new_file = utils::generate_writable_file(file_name, "md")?;
+    new_file.write_all(text.as_bytes())?;
+    Ok(())
+}
 
+pub fn single_post_epub(file_name: &str, text: &str) -> Result<(), Box<dyn Error>> {
+    let mut epub_builder = EpubBuilder::new(ZipLibrary::new().unwrap()).unwrap();
+    epub_builder.metadata("author", "docbaygio")?;
+    epub_builder.metadata("title", file_name)?;
+    // Set some metadata
+    epub_builder.add_content(EpubContent::new("post.xhtml", text.as_bytes())
+                     .title("Post")
+                     .reftype(ReferenceType::Text))?
+        .inline_toc();
+
+    // Write EPUB to file
+    let mut epub_file = fs::File::create(format!("{}.epub", file_name))?;
+    epub_builder.generate(&mut epub_file)?;
+    Ok(())
+}
+
+pub fn write_to_single_epub(posts: Vec<String>) -> Result<(), Box<dyn Error>> {
+    let mut epub_builder = EpubBuilder::new(ZipLibrary::new().unwrap()).unwrap();
+    epub_builder.metadata("author", "docbaygio")?;
+    epub_builder.metadata("title", "EPUB Feed")?;
+    // Set some metadata
+    for post in posts.iter().enumerate() {
+        epub_builder.add_content(EpubContent::new(format!("{}.xhtml", post.0), post.1.as_bytes())
+                     .title(format!("Post #{}", post.0))
+                     .reftype(ReferenceType::Text))?
+        .inline_toc();
+    }
+
+    // Write EPUB to file
+    let mut epub_file = fs::File::create("EPUB_FEED.epub")?;
+    epub_builder.generate(&mut epub_file)?;
+    Ok(())
+}
 /* The main function
 Các chế độ nén:
 Người dùng sẽ có thể tải xuống một bài, hoặc nhiều bài
@@ -70,13 +110,23 @@ Người dùng sẽ có thể tải xuống một bài, hoặc nhiều bài
         - Generator cũng là `docbaygio`
 */
 
-pub fn app(user_requested_format: RequestedEbookFormat, downloading_mode: DownloadingMode) -> anyhow::Result<()> {
+pub fn app(user_requested_format: RequestedEbookFormat, downloading_mode: DownloadingMode, lang: &str) -> anyhow::Result<()> {
     match downloading_mode {
         DownloadingMode::SingleURL(item) => {
             match user_requested_format {
-                RequestedEbookFormat::EPUB => todo!(),
+                RequestedEbookFormat::EPUB => {
+                    single_post_epub(
+                        &fetching_page_title(&item),
+                        &compose_xhtml(
+                            &strip_html(&item)?, 
+                            &fetching_page_title(&item), 
+                            lang)
+                        ).unwrap();
+                },
                 RequestedEbookFormat::SingleMarkdown => {
-                    write_to_md_file(&fetching_page_title(&item), to_markdown(&strip_html(&item)?));
+                    write_to_md_file(
+                        &fetching_page_title(&item), 
+                        to_markdown(&strip_html(&item)?))?;
                 },
                 RequestedEbookFormat::MultipleMarkdown => {
                     println!("Doesn't support multiple file for SINGLEURL");
@@ -89,12 +139,33 @@ pub fn app(user_requested_format: RequestedEbookFormat, downloading_mode: Downlo
         },
         DownloadingMode::MultipleURL(items) => {
             match user_requested_format {
-                RequestedEbookFormat::EPUB => todo!(),
-                RequestedEbookFormat::SingleMarkdown => todo!(),
-                RequestedEbookFormat::MultipleMarkdown => todo!(),
-                RequestedEbookFormat::Other => todo!(),
+                RequestedEbookFormat::EPUB => {
+                    write_to_single_epub(items.iter().map(|link| 
+                        compose_xhtml(&strip_html(&link).unwrap(), 
+                        &fetching_page_title(&link),
+                        lang)
+                    ).collect::<Vec<String>>()).unwrap();
+                },
+                RequestedEbookFormat::SingleMarkdown => {
+                    write_to_md_file("Feed", items.iter().map(|item| 
+                        to_markdown(&strip_html(&item).unwrap())
+                    ).collect::<String>())?;
+                },
+                RequestedEbookFormat::MultipleMarkdown => {
+                    for item in items {
+                        write_to_md_file(
+                            &fetching_page_title(&item), 
+                            to_markdown(&strip_html(&item)?))?
+                    }
+                },
+                RequestedEbookFormat::Other => {
+                    println!("Unknown e-book format");
+                },
             }
         },
+        DownloadingMode::Unknown => {
+            println!("Unknown downloading mode");
+        }
     };
     Ok(())
     

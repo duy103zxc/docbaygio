@@ -1,18 +1,13 @@
-use std::{env, process};
-use args::Config;
+use args::get_args;
+use content::app;
 mod content;
 mod utils;
 mod args;
 
-fn main() -> anyhow::Result<()> {
-    let config = Config::new(env::args()).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
-        process::exit(1);
-    });
-    // utils::download_the_post(&config.url, &config.filename)?;
-    println!("Downloading the post from the Internet...");
 
-    Ok(())
+fn main() -> anyhow::Result<()> {
+    let user_args = get_args(String::from("en"))?;
+    app(user_args.ebook_format, user_args.downloading_mode, &user_args.book_lang)
 }
 
 
