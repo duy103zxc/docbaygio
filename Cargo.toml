@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ureq = "2.10"
-html-purifier = "0.3.0"
-html2md = "0.2.14"
+ureq = "3.0.4"
+sanitize_html = "0.8.1"
 anyhow = "1.0.95"
+nanohtml2text = "0.2.1"

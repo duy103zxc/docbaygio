@@ -1,1 +1,1 @@
-cargo run -- "https://tailscale.com/blog/how-nat-traversal-works" "how-nat-works"
+cargo run -- "https://blog.reverberate.org/2025/02/03/no-panic-rust.html" "nothing"

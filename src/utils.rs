@@ -1,43 +1,23 @@
-use std::{fs::{File, OpenOptions}, io::Write};
+use std::{error::Error, fs::{File, OpenOptions}, io::Write};
 
-use html2md::parse_html;
-use html_purifier::{purifier, Settings};
-use ureq::{Agent, Response};
+use nanohtml2text::html2text;
+use sanitize_html::{errors::SanitizeError, rules::predefined::BASIC, sanitize_str};
+use ureq::http::Response;
 
-pub fn fetching_content_from_url(url: &str, refer_site: &str) -> Result<Response, ureq::Error> {
-    let user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
-    
-    let ureq_agent: Agent = ureq::AgentBuilder::new()
-    .build();
-
-    let body = ureq_agent.get(url)
-        .set("User-Agent", user_agent)
-        .set("Referer", refer_site)
-        .call();
-    body
+pub fn fetching_content_from_url(url: &str) -> Result<Response<ureq::Body>, ureq::Error>  {
+    ureq::get(url)
+        .header("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+        .call()
 }
 
-pub fn clean_raw_response(html_input: &str) -> String {
-    let settings = Settings {
-        ..Settings::default()
-    };
-    let output = purifier(html_input, settings);
-    return output;
-}
-
-
-pub fn download_the_post(url: &str, file_name: &str) -> anyhow::Result<()> {
-    // 1. Downloading the post from the internet
-    let raw_content = fetching_content_from_url(url, url)?.into_string()?;
-    // 2. Clean the HTML
-    let cleaned_content = clean_raw_response(&raw_content);
-    // 3. Convert it into Markdown
-    let output = parse_html(&cleaned_content);
-    // 4. Save it into a new file (? name)
-    let mut new_file = generate_writable_file(file_name, "md")?;
-    new_file.write_all(output.as_bytes())?;
-
-    Ok(())
+/*
+!!!
+How to deal with Result<> with multiple types of errors in one function 
+*/
+pub fn download_the_post(url: &str, file_name: String) -> Result<String, &impl Error> {
+    sanitize_str(&BASIC, &fetching_content_from_url(url)?
+    .body_mut()
+    .read_to_string()?)
 }
 
 
