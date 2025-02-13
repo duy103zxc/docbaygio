@@ -4,8 +4,12 @@
 Hiện tại ứng dụng chỉ được tạo bản Build cho Linux. Khi nào có máy Windows thì tạo cho Windows sau.
 
 ### Hướng dẫn sử dụng
-Chương trình sẽ có hai chế độ tải xuống, tải thông qua đường dẫn và thông qua tệp txt. Bạn cần phải nhập thêm cả mã ngôn ngữ. Đọc thêm các mã ngôn ngữ được hỗ trợ trong phần mềm tại: [Những ngôn ngữ được hỗ trợ](supported_languages.txt). Bạn sẽ phải nhập đúng cú pháp để tải được. 
+Chương trình sẽ có hai chế độ tải xuống, tải thông qua đường dẫn và thông qua tệp txt: 
 
+- `get-file`: Sẽ nhập tệp `txt` làm Input.
+- `get-link`: Sẽ nhập đường dẫn URL làm Input.
+
+Bạn cần phải nhập thêm cả mã ngôn ngữ. Đọc thêm các mã ngôn ngữ được hỗ trợ trong phần mềm tại: [Những ngôn ngữ được hỗ trợ](supported_languages.txt). Bạn sẽ phải nhập đúng cú pháp để tải được. 
 Bạn chỉ cần nhập:
 
 ```bash
