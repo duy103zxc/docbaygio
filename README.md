@@ -1,7 +1,8 @@
 # docbaygio
-Ứng dụng tải toàn bộ bài viết và nén thành một tệp EPUB hoàn chỉnh.
+Ứng dụng CLI giúp tải toàn bộ bài viết và nén thành một tệp EPUB hoàn chỉnh. Có thể sẽ hỗ trợ Markdown với PDF trong thời gian tới nếu không lười.
 
-Hiện tại ứng dụng chỉ được tạo bản Build cho Linux. Khi nào có máy Windows thì tạo cho Windows sau.
+### Tải ứng dụng
+Bạn ghé vào phần [Release](https://github.com/duy103zxc/docbaygio/releases) để tải xuống (Hiện tại chưa làm bản cho Windows).
 
 ### Hướng dẫn sử dụng
 Chương trình sẽ có hai chế độ tải xuống, tải thông qua đường dẫn và thông qua tệp txt: 
