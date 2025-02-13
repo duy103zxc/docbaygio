@@ -1,13 +1,17 @@
-use args::get_args;
-use content::app;
-mod content;
-mod utils;
-mod args;
+use crate::config::run;
+use crate::config::Config;
+use std::env;
 
+mod config;
+mod epub;
 
-fn main() -> anyhow::Result<()> {
-    let user_args = get_args(String::from("en"))?;
-    app(user_args.ebook_format, user_args.downloading_mode, &user_args.book_lang)
+pub type Error = Box<dyn std::error::Error>;
+pub type Result<T> = std::result::Result<T, Error>;
+
+fn main() -> Result<()> {
+    println!("Downloading post(s) from the Internet");
+    let args = env::args();
+    let new_args = Config::new(args)?;
+    run(new_args)?;
+    Ok(())
 }
-
-

@@ -1,2 +1,2 @@
 cargo build --release
-mv target/release/docbaygio ~/.local/bin/
+mv target/release/epub-ize2 ~/.local/bin/
