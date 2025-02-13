@@ -1,5 +1,6 @@
 use epub_builder::EpubBuilder;
 use epub_builder::EpubContent;
+use epub_builder::EpubVersion;
 use epub_builder::ReferenceType;
 use epub_builder::ZipLibrary;
 use readability::extractor;
@@ -14,7 +15,8 @@ pub fn gen_epub(urls: Vec<String>, lang: &str) -> Result<(), Box<dyn Error>> {
     let mut epub_builder = EpubBuilder::new(ZipLibrary::new().unwrap()).unwrap();
     epub_builder.metadata("author", "Docbaygio")?;
     epub_builder.metadata("title", file_name)?;
-    epub_builder.epub_version(epub_builder::EpubVersion::V30);
+    epub_builder.metadata("lang", lang)?;
+    epub_builder.epub_version(EpubVersion::V30);
     for url in urls.iter().enumerate() {
         let post = extractor::scrape(url.1)?;
         epub_builder
@@ -37,7 +39,7 @@ pub fn gen_epub(urls: Vec<String>, lang: &str) -> Result<(), Box<dyn Error>> {
 pub fn compose_html(html_input: &str, title: &str, lang: &str) -> String {
     format!(
         r##"<?xml version='1.0' encoding='utf-8'?>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{}" xml:lang="{}">
+<html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="{}" lang="{}">
     <head>
         <title>{}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>

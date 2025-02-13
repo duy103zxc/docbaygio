@@ -9,7 +9,7 @@ pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
 
 fn main() -> Result<()> {
-    println!("Downloading post(s) from the Internet");
+    println!("Docbaygio đang tải nội dung cho bạn, lỗi có thể xảy ra trong quá trình tải xuống. Bạn cần nhập đúng lệnh và có kết nối Internet để thực hiện nha <3!");
     let args = env::args();
     let new_args = Config::new(args)?;
     run(new_args)?;
