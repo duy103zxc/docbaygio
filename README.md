@@ -19,7 +19,7 @@ docbaygio get-file vi links.txt
 
 ```bash
 docbaygio get-link en    https://jdemeta.net/2019/09/15/exiting-modernity/
-^		  ^        ^      ^
+^         ^        ^      ^
 Tên ứng | Lệnh   | Ngôn | Đường dẫn bài viết
 dụng      tải      ngữ
 ```
@@ -38,7 +38,7 @@ Sau đó chạy lệnh dưới đây
 
 ```bash
 docbaygio get-file en    links.txt
-^		  ^        ^      ^
+^         ^        ^      ^
 Tên ứng | Lệnh   | Ngôn | Tên tệp lưu trữ đường dẫn
 dụng      tải      ngữ
 ```
