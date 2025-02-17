@@ -1,6 +1,7 @@
 use epub_builder::EpubBuilder;
 use epub_builder::EpubContent;
 use epub_builder::EpubVersion;
+use epub_builder::MetadataOpf;
 use epub_builder::ReferenceType;
 use epub_builder::ZipLibrary;
 use readability::extractor;
@@ -10,13 +11,40 @@ use std::fs::File;
 use std::fs::OpenOptions;
 use std::path::Path;
 
+static DEFAULT_CSS: &str = include_str!("sample.css");
+
 pub fn gen_epub(urls: Vec<String>, lang: &str) -> Result<(), Box<dyn Error>> {
     let file_name = &gen_filename();
+    let epub_css = gen_css_from_lang(lang);
+
     let mut epub_builder = EpubBuilder::new(ZipLibrary::new().unwrap()).unwrap();
     epub_builder.metadata("author", "Docbaygio")?;
     epub_builder.metadata("title", file_name)?;
     epub_builder.metadata("lang", lang)?;
     epub_builder.epub_version(EpubVersion::V30);
+    epub_builder.stylesheet(epub_css.as_bytes())?;
+    epub_builder.add_cover_image("cover.png", &include_bytes!("images/cover.jpg")[..], "image/jpeg")?;
+    // // Adding fonts manually
+    // epub_builder.add_resource("fonts/FreeSansBold.otf", &include_bytes!("fonts/FreeSansBold.otf")[..], "font/otf")?;
+    // epub_builder.add_resource("fonts/FreeSerif.otf", &include_bytes!("fonts/FreeSerif.otf")[..], "font/otf")?;
+    // epub_builder.add_resource("fonts/UbuntuMono-B.ttf", &include_bytes!("fonts/UbuntuMono-B.ttf")[..], "font/ttf")?;
+    // epub_builder.add_resource("fonts/UbuntuMono-BI.ttf", &include_bytes!("fonts/UbuntuMono-BI.ttf")[..], "font/ttf")?;
+    // epub_builder.add_resource("fonts/UbuntuMono-R.ttf", &include_bytes!("fonts/UbuntuMono-R.ttf")[..], "font/ttf")?;
+    // epub_builder.add_resource("fonts/UbuntuMono-RI.ttf", &include_bytes!("fonts/UbuntuMono-RI.ttf")[..], "font/ttf")?;
+
+    match lang {
+        "ja" | "zh" => {
+            epub_builder.add_metadata_opf(MetadataOpf {
+                name: String::from("primary-writing-mode"),
+                content: String::from("vertical-rl")
+            });
+            epub_builder.epub_direction(epub_builder::PageDirection::Rtl);
+        },
+        _ => {
+            println!("Using default non-vertical layout for the ebook");
+        }
+    }
+
     for url in urls.iter().enumerate() {
         let post = extractor::scrape(url.1)?;
         epub_builder
@@ -42,12 +70,14 @@ pub fn compose_html(html_input: &str, title: &str, lang: &str) -> String {
 <html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="{}" lang="{}">
     <head>
         <title>{}</title>
+        <link rel="stylesheet" type="text/css" href="stylesheet.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     </head>
     <body>
+        <h2>{}</h2>
         {}
     {}"##,
-        lang, lang, title, html_input, "\n\t</body>\n</html>"
+        lang, lang, title, title, html_input, "\n\t</body>\n</html>"
     )
 }
 
@@ -106,4 +136,26 @@ fn gen_filename() -> String {
         }
     }
     file_name
+}
+
+
+pub fn gen_css_from_lang(lang: &str) -> &str {
+    match lang {
+        "en" | "vi" => {
+            DEFAULT_CSS
+        }, 
+        "ja" | "zh" => {
+            r##"html {
+  -webkit-writing-mode: vertical-rl;
+  -moz-writing-mode: vertical-rl;
+  -ms-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+}
+            "##
+        }, 
+        _  => {
+            DEFAULT_CSS
+        }
+
+    }
 }
