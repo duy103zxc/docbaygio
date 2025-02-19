@@ -202,6 +202,7 @@ dependencies = [
 name = "docbaygio"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "epub-builder",
  "readability",
  "url",

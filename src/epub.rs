@@ -1,3 +1,4 @@
+use chrono::{Datelike, Timelike, Utc};
 use epub_builder::EpubBuilder;
 use epub_builder::EpubContent;
 use epub_builder::EpubVersion;
@@ -9,7 +10,6 @@ use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::path::Path;
 
 static DEFAULT_CSS: &str = include_str!("sample.css");
 
@@ -24,13 +24,6 @@ pub fn gen_epub(urls: Vec<String>, lang: &str) -> Result<(), Box<dyn Error>> {
     epub_builder.epub_version(EpubVersion::V30);
     epub_builder.stylesheet(epub_css.as_bytes())?;
     epub_builder.add_cover_image("cover.png", &include_bytes!("images/cover.jpg")[..], "image/jpeg")?;
-    // // Adding fonts manually
-    // epub_builder.add_resource("fonts/FreeSansBold.otf", &include_bytes!("fonts/FreeSansBold.otf")[..], "font/otf")?;
-    // epub_builder.add_resource("fonts/FreeSerif.otf", &include_bytes!("fonts/FreeSerif.otf")[..], "font/otf")?;
-    // epub_builder.add_resource("fonts/UbuntuMono-B.ttf", &include_bytes!("fonts/UbuntuMono-B.ttf")[..], "font/ttf")?;
-    // epub_builder.add_resource("fonts/UbuntuMono-BI.ttf", &include_bytes!("fonts/UbuntuMono-BI.ttf")[..], "font/ttf")?;
-    // epub_builder.add_resource("fonts/UbuntuMono-R.ttf", &include_bytes!("fonts/UbuntuMono-R.ttf")[..], "font/ttf")?;
-    // epub_builder.add_resource("fonts/UbuntuMono-RI.ttf", &include_bytes!("fonts/UbuntuMono-RI.ttf")[..], "font/ttf")?;
 
     match lang {
         "ja" | "zh" => {
@@ -122,19 +115,20 @@ fn generate_empty_epub_file(file_name: &str) -> Result<File, std::io::Error> {
 }
 
 fn gen_filename() -> String {
-    let mut state = Some(0);
-    let mut file_name = String::new();
+    // Format: 2016-04-25T10:30:00
+    let now = Utc::now();
 
-    while let Some(i) = state {
-        if Path::new(&format!("Docbaygio{}.epub", i)).exists() {
-            println!("Docbaygio{i}.epub exists, generating a new filename");
-
-            state = Some(i + 1);
-        } else {
-            file_name = format!("Docbaygio{}", i);
-            state = None;
-        }
-    }
+    let (is_pm, hour) = now.hour12();
+    let (_is_common_era, year) = now.year_ce();
+    let file_name = 
+        format!("{}-{:02}-{:02}T{:02}_{:02}_{:02}{}",
+            year,
+            now.month(),
+            now.day(),
+            hour,
+            now.minute(),
+            now.second(),
+            if is_pm { "PM" } else { "AM" });
     file_name
 }
 

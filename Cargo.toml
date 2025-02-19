@@ -7,6 +7,7 @@ edition = "2021"
 readability = "0.3.0"
 epub-builder = "0.8.0"
 url = "2.5.4"
+chrono = "0.4.26"
 
 [profile.release]
 strip = true  # Automatically strip symbols from the binary.
