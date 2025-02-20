@@ -11,7 +11,7 @@ use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
 
-static DEFAULT_CSS: &str = include_str!("sample.css");
+static DEFAULT_CSS: &str = include_str!("stylesheet");
 
 pub fn gen_epub(urls: Vec<String>, lang: &str) -> Result<(), Box<dyn Error>> {
     let file_name = &gen_filename();
